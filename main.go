@@ -17,6 +17,7 @@ func main() {
 	db.AutoMigrate(&pb.User{})
 
 	repo := &UserRepository{db}
+	tokenService := &TokenService{repo}
 
 	srv := micro.NewService(
 		micro.Name("go.micro.srv.user"),
@@ -25,7 +26,7 @@ func main() {
 
 	srv.Init()
 
-	pb.RegisterUserServiceHandler(srv.Server(), &service{repo})
+	pb.RegisterUserServiceHandler(srv.Server(), &service{repo, tokenService})
 
 	if err := srv.Run(); err != nil {
 		fmt.Println(err)

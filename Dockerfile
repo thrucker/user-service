@@ -9,7 +9,7 @@ RUN go mod download
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o shippy-service-user main.go database.go handler.go repository.go
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o shippy-service-user main.go database.go handler.go repository.go token_service.go
 
 FROM alpine:latest
 
