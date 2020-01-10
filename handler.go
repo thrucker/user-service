@@ -2,8 +2,7 @@ package main
 
 import (
 	"context"
-	"encoding/json"
-	"github.com/micro/go-micro/broker"
+	"github.com/micro/go-micro"
 	pb "github.com/thrucker/user-service/proto/user"
 	"golang.org/x/crypto/bcrypt"
 	"log"
@@ -14,7 +13,7 @@ const topic = "user.created"
 type service struct {
 	repo         Repository
 	tokenService Authable
-	PubSub       broker.Broker
+	publisher    micro.Publisher
 }
 
 func (srv *service) Get(ctx context.Context, req *pb.User, res *pb.Response) error {
@@ -67,32 +66,12 @@ func (srv *service) Create(ctx context.Context, req *pb.User, res *pb.Response) 
 		return err
 	}
 	res.User = req
-	if err := srv.publishEvent(req); err != nil {
+	if err := srv.publisher.Publish(ctx, req); err != nil {
 		return err
 	}
 	return nil
 }
 
 func (srv *service) ValidateToken(ctx context.Context, req *pb.Token, res *pb.Token) error {
-	return nil
-}
-
-func (srv *service) publishEvent(user *pb.User) error {
-	body, err := json.Marshal(user)
-	if err != nil {
-		return err
-	}
-
-	msg := &broker.Message{
-		Header: map[string]string{
-			"id": user.Id,
-		},
-		Body: body,
-	}
-
-	if err := srv.PubSub.Publish(topic, msg); err != nil {
-		log.Printf("[pub] failed: %v\n", err)
-		return err
-	}
 	return nil
 }
