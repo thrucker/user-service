@@ -8,6 +8,8 @@ import (
 	"log"
 )
 
+const UserServiceId = "shippy.service.user"
+
 func main() {
 	db, err := CreateConnection()
 	if err != nil {
@@ -21,7 +23,7 @@ func main() {
 	tokenService := &TokenService{repo}
 
 	srv := micro.NewService(
-		micro.Name("go.micro.srv.user"),
+		micro.Name(UserServiceId),
 		micro.Version("latest"),
 	)
 
