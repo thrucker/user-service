@@ -4,11 +4,10 @@ package main
 import (
 	"fmt"
 	"github.com/micro/go-micro"
+	"github.com/thrucker/user-service/id"
 	pb "github.com/thrucker/user-service/proto/user"
 	"log"
 )
-
-const UserServiceId = "shippy.service.user"
 
 func main() {
 	db, err := CreateConnection()
@@ -23,7 +22,7 @@ func main() {
 	tokenService := &TokenService{repo}
 
 	srv := micro.NewService(
-		micro.Name(UserServiceId),
+		micro.Name(id.UserServiceId),
 		micro.Version("latest"),
 	)
 
